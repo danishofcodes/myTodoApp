@@ -8,11 +8,12 @@ function App() {
 
   // this is an array object that I have created inside useState Hook so that it can be taken as initial values (dummy values for testing sake);
 
-  const [listitems, setListItems] = useState([
-    { todo: 'itenary this todo', complete: false, id: 3424213 },
-    { todo: 'itenary that', complete: false, id: 3424214 },
-  ]);
-
+  const [listitems, setListItems] = useState([]);
+  // if(listitems=="null"){
+  //   console.log(true)
+  // }else{
+  //   console.log(false)
+  // }
   // function to add ne todo
   function addNewTodo() {
     let newItem = { todo: todoVal.current.value.trim(), complete: false, id: Date.now() };
@@ -48,16 +49,18 @@ function App() {
       </button>
 
       <div className="todolist">
+     
         {/* here we are rendering each new items in the todo list using map to map over the array of todo objs */}
+        {listitems.length > 0 ? (
         <ol>
           {listitems.map((item) => (
-            <Todolist
+             <Todolist
               key={item.id}
               item={item}
               handleChange={() => handleChange(item.id)} handleClick={()=>deleteToDo(item.id)} // Pass item.id for targeted update
-            />
+            /> 
           ))}
-        </ol>
+        </ol>) : (<p>Wow so empty ! no todos added yet !</p>)}
       </div>
     </>
   );
