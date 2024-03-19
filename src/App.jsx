@@ -2,6 +2,8 @@
 import { useState, useRef } from 'react';
 import './App.css';
 import Todolist from './components/Todolist';
+import './index.css'
+
 
 function App() {
   let todoVal = useRef();
@@ -18,12 +20,13 @@ function App() {
   function addNewTodo() {
     let newItem = { todo: todoVal.current.value.trim(), complete: false, id: Date.now() };
     console.log(newItem)
-    if (newItem.todo!== ""){
-    setListItems((prevItems) => [...prevItems, newItem]);
-  }
-  else{
-    alert("write something please before saving")
-  }
+    if (newItem.todo !== "") {
+      setListItems((prevItems) => [...prevItems, newItem]);
+      todoVal.current.value = "";
+    }
+    else {
+      alert("write something please before saving")
+    }
   }
 
   // here we fire this function on every onChange triggers, everytime we check or uncheck the checkboxes, 
@@ -35,34 +38,56 @@ function App() {
     console.log(listitems)
   }
 
-  function deleteToDo(id){
-     let updatedList = listitems.filter((item)=> item.id!=id);
-     console.log(updatedList)
-     setListItems(updatedList);
+  function deleteToDo(id) {
+    let updatedList = listitems.filter((item) => item.id != id);
+    console.log(updatedList)
+    setListItems(updatedList);
   }
 
-  return (
-    <>
-      <input type="text" placeholder="note your todo" ref={todoVal} />
-      <button className="save" onClick={addNewTodo}>
-        Save
-      </button>
+  function clearAll(){
+    todoVal.current.value =null;
+  }
 
-      <div className="todolist">
-     
+  function clearMarked(){
+   let pendingTodos = listitems.filter((item)=> { return !item.complete })
+   setListItems(pendingTodos);
+  }
+
+  // console.log("its available : "+listitems[0].complete)
+  return (
+    <div className="container flex flex-col justify-center items-center">
+      <form className="w-full max-w-sm">
+        <div className="flex items-center border-b border-teal-500 py-2">
+          <input ref={todoVal} className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="whats your todo?" aria-label="your todo" />
+          <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" type="button" onClick={addNewTodo}>
+            Save
+          </button>
+          <button className="flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded" type="button" onClick={clearAll}>
+            fresh
+          </button>
+        </div>
+      </form>
+
+      <button className="flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded" type="button" onClick={clearMarked}>
+      Clear Marked
+          </button>
+
+      <div className="bg-[#ccfbf1] w-full sm:w-1/2 mt-2 p-4 text-cyan-950 font-normal rounded-lg">
+
         {/* here we are rendering each new items in the todo list using map to map over the array of todo objs */}
+        
         {listitems.length > 0 ? (
-        <ol>
-          {listitems.map((item) => (
-             <Todolist
-              key={item.id}
-              item={item}
-              handleChange={() => handleChange(item.id)} handleClick={()=>deleteToDo(item.id)} // Pass item.id for targeted update
-            /> 
-          ))}
-        </ol>) : (<p>Wow so empty ! no todos added yet !</p>)}
+          <ol>
+            {listitems.map((item) => (
+              <Todolist
+                key={item.id}
+                item={item}
+                handleChange={() => handleChange(item.id)} handleClick={() => deleteToDo(item.id)} // Pass item.id for targeted update
+              />
+            ))}
+          </ol>) : (<p className=" text-teal-700 font-medium">Wow so empty ! no todos added yet !</p>)}
       </div>
-    </>
+    </div>
   );
 }
 
